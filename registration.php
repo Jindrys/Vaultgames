@@ -26,43 +26,92 @@
             </figure>
           </a>
         <h2 class="login-headline">VÍTÁME NOVÉHO <br>GAMERA!</h2>
-      <div class="inputs">
+      <!-- Nick -->
+      <?php
+      if (isset($_POST["submit"])){
+        $nick = $_POST['nick'];
+        $jmeno = $_POST["jmeno"];
+        $prijmeni = $_POST["prijmeni"];
+        $email = $_POST["email"];
+        $telefon = $_POST["telefon"];
+        $heslo = $_POST["heslo"];
+
+        $hesloHash = password_hash($heslo, PASSWORD_DEFAULT);
+
+        $errors = array();
+           
+           if (empty($nick) OR empty($jmeno) OR empty($prijmeni) OR empty($email)OR empty($telefon)OR empty($email)) {
+            array_push($errors,"All fields are required");
+           }
+           if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            array_push($errors, "Email is not valid");
+           }
+           if (strlen($heslo) < 8) {
+            array_push($errors, "Heslo musí mít alespoň 8 znaků.");
+          }
+          if (!preg_match('/[A-Z]/', $heslo)) {
+            array_push($errors, "Heslo musí obsahovat alespoň jedno velké písmeno.");
+          }
+    
+          if (!preg_match('/[0-9]/', $heslo)) {
+            array_push($errors, "Heslo musí obsahovat alespoň jedno číslo.");
+          }
+    
+          if (!preg_match('/[\W]/', $heslo)) {
+            array_push($errors, "Heslo musí obsahovat alespoň jeden speciální znak.");
+          }
+          
+          
+
+          }else{
+
+            
+      } 
+    
+      ?>
+
+      <form action="registration.php" method="post">
+
+        <div class="inputs">
         <div class="input">
             <label for="username">Přezdívka</label>
             <div class="input-wrapper">
-                <input id="username" type="username" placeholder="Zadejte svoji přezdívku..." />
+                <input name="nick" type="text" placeholder="Zadejte svoji přezdívku..." />
                 <i class="fa-solid fa-user"></i>
             </div>
         </div>
+        <!-- Jmeno -->
         <div class="name-wrapper">
             <div class="input">
                 <label for="name">Jméno</label>
                 <div class="input-wrapper">
-                    <input id="name" type="name" placeholder="Zadejte jméno..." />
+                    <input name="jmeno" type="text" placeholder="Zadejte jméno..." />
                 </div>
             </div>
             <div class="input">
                 <label for="surname">Příjmení</label>
                 <div class="input-wrapper">
-                    <input id="surname" type="surname" placeholder="Zadejte příjmení..." />
+                    <input name="prijmeni" type="text" placeholder="Zadejte příjmení..." />
                 </div>
             </div>
         </div>
+        <!-- Email -->
         <div class="input">
             <label for="email">Email</label>
             <div class="input-wrapper">
-              <input id="email" type="email" placeholder="Zadejte svůj email..." />
+              <input name="email" type="email" placeholder="Zadejte svůj email..." />
               <i class="fa-solid fa-envelope"></i>
             </div>
         </div>
+        <!-- Telefon -->
         <div class="input">
             <label for="phone">Telefon</label>
             <div class="input-wrapper">
-              <input id="phone" type="phone" placeholder="Zadejte své telefoní číslo..." />
+              <input name="telefon" type="tel" placeholder="Zadejte své telefoní číslo..." />
               <i class="fa-solid fa-phone"></i>
             </div>
         </div>
-        
+        <!-- Heslo -->
         <div class="input">
           <label for="password">Heslo</label>
           <div class="input-wrapper">
@@ -72,14 +121,16 @@
             <div class="eye-icon">
               <i class="fa-solid fa-eye-slash"></i>
             </div>
-            <input id="password" type="password" placeholder="Zadejte heslo..."/>
+            <input name="heslo" type="password" placeholder="Zadejte heslo..."/>
           </div>
         </div>
         <div class="login-bottom">
         </div>
-        <a href="user.html">
-          <button class="login-btn">Zaregistrovat</button>
-        </a>
+        
+          <input type="submit" class="login-btn"  value="Registrovat se" name="submit"/>
+        </form>
+        
+        
         <div>
           <p>Už máš účet? <a href=login.html><span class="color">Přihlaš se</span></a></p>
         </div>
