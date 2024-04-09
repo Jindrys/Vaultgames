@@ -60,16 +60,39 @@
           if (!preg_match('/[\W]/', $heslo)) {
             array_push($errors, "Heslo musí obsahovat alespoň jeden speciální znak.");
           }
-          
-          
-
-          }else{
-
-            
-      } 
+          if (count($errors)>0) {
+            foreach ($errors as  $error) {
+                echo "<div class='alert-wrapper'>$error</div>";
+            }
+            include_once "database.php";
+            $sql = "SELECT * FROM uzivatel WHERE email = '$email'";
+            $result = mysqli_query($conn, $sql);
+            $rowCount = mysqli_num_rows($result);
+            if ($rowCount>0) {
+             array_push($errors,"Email already exists!");
+            }
+            if (count($errors)>0) {
+             foreach ($errors as  $error) {
+              echo "<div class='alert-wrapper'>$error</div>";
+            }
+            }else{
+             
+             $sql = "INSERT INTO uzivatel (nick, jmeno, prijmeni, email, telefon, heslo) VALUES ( ?, ?, ?, ? ,? ,?) ";
+             $stmt = mysqli_stmt_init($conn);
+             $prepareStmt = mysqli_stmt_prepare($stmt,$sql);
+             if ($prepareStmt) {
+                 mysqli_stmt_bind_param($stmt,"sss",$nick, $jmeno, $prijmeni,$email,$telefon, $hesloHash);
+                 mysqli_stmt_execute($stmt);
+                 echo "<div class='alert-wrapper'>You are registered successfully.</div>";
+             }else{
+                 die("Something went wrong");
+             }
+        }
+      }
+    }
+  
     
       ?>
-
       <form action="registration.php" method="post">
 
         <div class="inputs">
@@ -129,7 +152,6 @@
         
           <input type="submit" class="login-btn"  value="Registrovat se" name="submit"/>
         </form>
-        
         
         <div>
           <p>Už máš účet? <a href=login.html><span class="color">Přihlaš se</span></a></p>

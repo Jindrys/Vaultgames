@@ -799,6 +799,25 @@ footer h3 {
   cursor: pointer;
 }
 
+.alert-wrapper{
+  width: 100%;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
+  outline: 3px solid red;
+  font-family: "Space mono", monospace;
+  background-color: #fff;
+  caret-color: var(--primary-color);
+  color: red;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+
+
 /* sekce detail */
 .detail{
   display: flex;
@@ -930,3 +949,4 @@ footer h3 {
 }
 
 /* sekce cart*/
+
