@@ -64,7 +64,7 @@
             foreach ($errors as  $error) {
                 echo "<div class='alert-wrapper'>$error</div>";
             }
-            include_once "database.php";
+            include_once "database.php";//nefunguje mi tam dat db/DBConnection.php
             $sql = "SELECT * FROM uzivatel WHERE email = '$email'";
             $result = mysqli_query($conn, $sql);
             $rowCount = mysqli_num_rows($result);
