@@ -20,7 +20,7 @@
     <section class="login">
       <div class="login-wrapper">
         <div>
-          <a href="index.html">
+          <a href="index.php">
             <figure class="login-logo">
                 <img src="./images/login-logo.svg" alt="logo-voultgames">
             </figure>
@@ -35,11 +35,8 @@
         $email = $_POST["email"];
         $telefon = $_POST["telefon"];
         $heslo = $_POST["heslo"];
-
         $hesloHash = password_hash($heslo, PASSWORD_DEFAULT);
-
         $errors = array();
-           
            if (empty($nick) OR empty($jmeno) OR empty($prijmeni) OR empty($email)OR empty($telefon)OR empty($email)) {
             array_push($errors,"All fields are required");
            }
@@ -52,11 +49,9 @@
           if (!preg_match('/[A-Z]/', $heslo)) {
             array_push($errors, "Heslo musí obsahovat alespoň jedno velké písmeno.");
           }
-    
           if (!preg_match('/[0-9]/', $heslo)) {
             array_push($errors, "Heslo musí obsahovat alespoň jedno číslo.");
           }
-    
           if (!preg_match('/[\W]/', $heslo)) {
             array_push($errors, "Heslo musí obsahovat alespoň jeden speciální znak.");
           }
@@ -64,7 +59,7 @@
             foreach ($errors as  $error) {
                 echo "<div class='alert-wrapper'>$error</div>";
             }
-            include_once "database.php";//nefunguje mi tam dat db/DBConnection.php
+            require_once "db/DBConnection.php";//nefunguje mi tam dat db/DBConnection.php
             $sql = "SELECT * FROM uzivatel WHERE email = '$email'";
             $result = mysqli_query($conn, $sql);
             $rowCount = mysqli_num_rows($result);
@@ -76,7 +71,6 @@
               echo "<div class='alert-wrapper'>$error</div>";
             }
             }else{
-             
              $sql = "INSERT INTO uzivatel (nick, jmeno, prijmeni, email, telefon, heslo) VALUES ( ?, ?, ?, ? ,? ,?) ";
              $stmt = mysqli_stmt_init($conn);
              $prepareStmt = mysqli_stmt_prepare($stmt,$sql);
@@ -89,12 +83,8 @@
              }
         }
       }
-    }
-  
-    
-      ?>
+    }?>
       <form action="registration.php" method="post">
-
         <div class="inputs">
         <div class="input">
             <label for="username">Přezdívka</label>
@@ -149,17 +139,14 @@
         </div>
         <div class="login-bottom">
         </div>
-        
           <input type="submit" class="login-btn"  value="Registrovat se" name="submit"/>
         </form>
-        
         <div>
-          <p>Už máš účet? <a href=login.html><span class="color">Přihlaš se</span></a></p>
+          <p>Už máš účet? <a href=login.php><span class="color">Přihlaš se</span></a></p>
         </div>
       </div>
       </div>   
      </div>
-      
     </section>
   </body>
   </main>

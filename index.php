@@ -31,10 +31,10 @@
         <div class="nav-right">
           <i class="fa-solid fa-calendar"></i>
           <i class="fa-solid fa-heart"></i>
-          <a href="cart.html" class="nav-icon">
+          <a href="cart.php" class="nav-icon">
             <i class="fa-solid fa-cart-shopping"></i>
           </a>
-          <a href="login.html">
+          <a href="login.php">
             <div class="user">J</div>
           </a>
         </div>
@@ -90,96 +90,41 @@
           <span>Zobrazit vše</span>
         </header>
         <div class="news-content">
-          
-            <div class="news-card">
-              <a href="detail.html">
-                <div class="news-card_img">
-                  <img src="./images/fifa.png" alt="fifa 24" />
+
+        <?php
+          include_once ("db/DBConnection.php");
+          $stmt = $conn->prepare("SELECT id_hra, nazev, cena, datum_vydani, obrazek, platforma, zanr, výrobce, informace FROM hra LIMIT 10");
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach($result as $row) { 
+                $gameId = $row['id_hra'];
+                $imageProduct = $row['obrazek'];
+                $nameProduct = $row['nazev'];
+                $priceProduct = $row['cena'];
+                echo "<div class='news-card'>
+                <a href='detail.php?hra=$gameId'>
+                  <div class='news-card_img'>
+                    <img src='$imageProduct' alt='fifa 24' />
+                  </div>
+                </a>
+              <div class='news-card_content'>
+                <div class='news-card_top'>
+                  <h3>$nameProduct</h3>
+                  <div class='favorite'><i class='fa-regular fa-heart'></i></div>
                 </div>
-              </a>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>FC 24</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
+                <div class='news-card_bot'>
+                  <strong><span>$ $priceProduct</span></strong>
+                </div>
+                <div class='shop'>
+                  <i class='fa-solid fa-cart-shopping'></i>
+                </div>
               </div>
-              <div class="news-card_bot">
-                <strong><span>$60</span></strong>
-              </div>
-              <div class="shop">
-                <i class="fa-solid fa-cart-shopping"></i>
-              </div>
-            </div>
-          </div>
-          
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/diablo.png" alt="fifa 24" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Diablo 4</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$65</span></strong>
-              </div>
-              <div class="shop">
-                <i class="fa-solid fa-cart-shopping"></i>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/mortal.png" alt="fifa 24" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Mortal Kombat 1</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$60</span></strong>
-              </div>
-              <div class="shop">
-                <i class="fa-solid fa-cart-shopping"></i>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/spider.png" alt="fifa 24" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Marvel's Spider-Man 2</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$55</span></strong>
-              </div>
-              <div class="shop">
-                <i class="fa-solid fa-cart-shopping"></i>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/call.png" alt="fifa 24" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Call of Duty Modern Warfare 3</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$35</span></strong>
-              </div>
-              <div class="shop">
-                <i class="fa-solid fa-cart-shopping"></i>
-              </div>
-            </div>
-          </div>
-        </div>
+            </div>";
+                }
+
+          ?>
+        </div>  
       </section>
 
       <!-- Sekce soon -->

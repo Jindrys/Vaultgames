@@ -1,3 +1,22 @@
+<?php
+  include_once ("db/DBConnection.php");
+  $thisGame = htmlspecialchars($_GET["hra"], ENT_QUOTES);
+  $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `platforma`, `zanr`, `výrobce`, `informace`, obrazek_detail FROM `hra` WHERE id_hra =:id_hra");
+  $stmt->bindParam(":id_hra", $thisGame);
+  $stmt->execute();
+  $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  foreach($result as $row) { 
+    $gameId = $row['id_hra'];
+    $imageProduct = $row['obrazek_detail'];
+    $nameProduct = $row['nazev'];
+    $priceProduct = $row['cena'];
+    $datum_vydani = $row['datum_vydani'];
+    $platforma = $row['platforma'];
+    $zanr = $row['zanr'];
+    $vyrobce = $row['vyrobce'];
+    $info = $row['informace'];
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +39,7 @@
       <div class="nav-top">
         <div class="nav-left">
           <i class="fa-solid fa-bars"></i>
-          <a href="index.html">
+          <a href="index.php">
             <figure class="logo">
             <img src="./images/logo.svg" alt="logo for vault games" />
           </figure>
@@ -29,10 +48,10 @@
         <div class="nav-right">
           <i class="fa-solid fa-calendar"></i>
           <i class="fa-solid fa-heart"></i>
-          <a href="cart.html">
+          <a href="cart.php">
               <i class="fa-solid fa-cart-shopping"></i>
           </a>
-          <a href="login.html">
+          <a href="login.php">
             <div class="user">J</div>
           </a>
         </div>
@@ -53,31 +72,19 @@
     </nav>
   <main>
     <section class="detail">
-      <div class="game"></div>
+      <div class="game">
+        <img class="game" src="<?php echo $imageProduct?>"alt='fifa 24'> 
+      </div>
     <div class="detail-wrapper">
       <div class="game-name">
-        <h1>EA SPORTS FC 24</h1>
+        <h1><?php echo $nameProduct?></h1>
       </div>
       <div class="game-discription">
-        <p>SPORTS FC 24 je novou érou The World’s Game: 19 000+ plně licencovaných hráčů,<br>
-           700+ týmů a 30+ ligových soutěží zaručují historicky nejautentičtější fotbalový zážitek.<br>
-           EA SPORTS FC 24 zahrnuje verzi hry pro všechny herní konzole a i počítače.</p>
+        <p><?php echo $info ?></p>
       </div>
-      <div class="choices">
-        <select class="version">
-          <option value="Playstation 5">Playstation 5</option>
-          <option value="Playstation 4">Playstation 4</option>
-          <option value="XBOX">XBOX</option>
-          <option value="Switch">Nintendo Switch</option>
-          <option value="PC">PC</option>
-        </select>
-        <select class="version">
-          <option value="Standard">Standard edition</option>
-          <option value="">Special edition</option>
-        </select>
-      </div>
+      
       <div class="price">
-        <h2>CENA:$60</h2>
+        <h2>CENA: <?php echo $priceProduct?> CZK</h2>
         <div class="cart-btn">
           <i class="fa-solid fa-cart-shopping"></i>
           <button>Přidat do košíku</button>
@@ -104,3 +111,4 @@
       </div>
     </footer>
   </body>
+</html>
