@@ -1,3 +1,105 @@
+<?php
+include_once ("db/DBConnection.php");
+
+        $error_user_name = '';
+  $error_user_firstname ="";
+  $error_user_lastname ="";
+  $error_user_password = '';
+  $error_user_email = '';
+
+  $user_name = ''; 
+  $user_firstname = "";
+  $user_lastname = "";
+  $user_email = '';
+  $user_password = '';
+
+  $used_email = "";
+  $used_username = "";
+
+
+
+
+ if (isset($_POST["send"])) {
+
+  if (!empty($_POST["user_name"])) {
+   $regexp = "/^[A-Za-z0-9AEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+    if (preg_match($regexp, $_POST["user_name"])) {
+        $user_name = trim($_POST["user_name"]);
+    } else {  
+      $error_user_name = '<label class="alert-wrapper">Pouze písmena a číslice</label>'; 
+    }   
+  } else {
+    $error_user_name = '<label class="alert-wrapper">Povinné</label>';
+  }
+
+  if (!empty($_POST["user_firstname"])) {
+    $regexp = "/^[A-Za-zAEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+    if (preg_match($regexp, $_POST["user_firstname"])) {
+        $user_firstname = trim($_POST["user_firstname"]);
+    } else {  
+      $error_user_firstname = '<label class="text-danger">Zadejte opravdové jméno</label>';
+    }
+  } else {
+    $error_user_firstname = '<label class="text-danger">Povinné</label>';
+  }
+
+  if (!empty($_POST["user_lastname"])) {
+    $regexp = "/^[A-Za-zAEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+    if (preg_match($regexp, $_POST["user_lastname"])) {
+        $user_lastname = trim($_POST["user_lastname"]);
+    } else {  
+      $error_user_lastname = '<label class="text-danger">Zadejte opravdové příjmení</label>';
+    }
+  } else {
+    $error_user_lastname = '<label class="text-danger">Povinné</label>';
+  }
+  
+  if (!empty($_POST["user_email"])) {
+    $user_email = filter_var($_POST["user_email"], FILTER_SANITIZE_EMAIL);
+    
+    if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+        $user_email = trim($_POST["user_email"]);
+        $stmt2 = $conn->prepare("SELECT email FROM `uzivatel` WHERE email=:email");
+        $stmt2->bindParam(':email', $user_email);
+        $stmt2->execute();
+        $result2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+        if ($result2) {
+            $error_user_email = '<label class="text-danger">Tento e-mail již existuje v databázi</label>';
+        } else {
+          $user_email = trim($_POST["user_email"]);
+        }
+    } else {
+        $error_user_email = '<label class="text-danger">Neplatná e-mailová adresa</label>';
+    }
+} else {
+    $error_user_email = '<label class="text-danger">E-mailová adresa je povinná</label>';
+}
+
+
+  if (!empty($_POST["user_password"])) {
+    $user_password = $_POST["user_password"];
+        $regexp = "/^[A-Za-z0-9\-\_\.]{8,}$/";
+      if (preg_match($regexp, $_POST["user_password"])) {
+          $user_password = trim($_POST["user_password"]);
+          $user_password = password_hash($user_password, PASSWORD_DEFAULT);
+      } else {  
+        $error_user_password = '<label class="text-danger">Pouze písmena, číslice a zanky:_ . - </label>';
+      }
+  } else {
+    $error_user_password = '<label class="text-danger">Povinné</label>';
+  }
+if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastname == "" && $error_user_email == "" && $error_user_password == "" ) {
+  $stmt = $conn->prepare("INSERT INTO `uzivatel`(id_uzivatel, `nick`, `jmeno`, `prijmeni`, `email`, `heslo`) VALUES (NULL, :nick, :jmeno, :prijmeni, :email, :heslo)");
+  $stmt->bindParam(":nick", $user_name);
+  $stmt->bindParam(":jmeno", $user_firstname);
+  $stmt->bindParam(":prijmeni", $user_lastname);
+  $stmt->bindParam(":email", $user_email);
+  $stmt->bindParam(":heslo", $user_password);
+  $stmt->execute();
+}
+}
+
+    ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -27,69 +129,13 @@
           </a>
         <h2 class="login-headline">VÍTÁME NOVÉHO <br>GAMERA!</h2>
       <!-- Nick -->
-      <?php
-      if (isset($_POST["submit"])){
-        $nick = $_POST['nick'];
-        $jmeno = $_POST["jmeno"];
-        $prijmeni = $_POST["prijmeni"];
-        $email = $_POST["email"];
-        $telefon = $_POST["telefon"];
-        $heslo = $_POST["heslo"];
-        $hesloHash = password_hash($heslo, PASSWORD_DEFAULT);
-        $errors = array();
-           if (empty($nick) OR empty($jmeno) OR empty($prijmeni) OR empty($email)OR empty($telefon)OR empty($email)) {
-            array_push($errors,"All fields are required");
-           }
-           if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            array_push($errors, "Email is not valid");
-           }
-           if (strlen($heslo) < 8) {
-            array_push($errors, "Heslo musí mít alespoň 8 znaků.");
-          }
-          if (!preg_match('/[A-Z]/', $heslo)) {
-            array_push($errors, "Heslo musí obsahovat alespoň jedno velké písmeno.");
-          }
-          if (!preg_match('/[0-9]/', $heslo)) {
-            array_push($errors, "Heslo musí obsahovat alespoň jedno číslo.");
-          }
-          if (!preg_match('/[\W]/', $heslo)) {
-            array_push($errors, "Heslo musí obsahovat alespoň jeden speciální znak.");
-          }
-          if (count($errors)>0) {
-            foreach ($errors as  $error) {
-                echo "<div class='alert-wrapper'>$error</div>";
-            }
-            require_once "db/DBConnection.php";//nefunguje mi tam dat db/DBConnection.php
-            $sql = "SELECT * FROM uzivatel WHERE email = '$email'";
-            $result = mysqli_query($conn, $sql);
-            $rowCount = mysqli_num_rows($result);
-            if ($rowCount>0) {
-             array_push($errors,"Email already exists!");
-            }
-            if (count($errors)>0) {
-             foreach ($errors as  $error) {
-              echo "<div class='alert-wrapper'>$error</div>";
-            }
-            }else{
-             $sql = "INSERT INTO uzivatel (nick, jmeno, prijmeni, email, telefon, heslo) VALUES ( ?, ?, ?, ? ,? ,?) ";
-             $stmt = mysqli_stmt_init($conn);
-             $prepareStmt = mysqli_stmt_prepare($stmt,$sql);
-             if ($prepareStmt) {
-                 mysqli_stmt_bind_param($stmt,"sss",$nick, $jmeno, $prijmeni,$email,$telefon, $hesloHash);
-                 mysqli_stmt_execute($stmt);
-                 echo "<div class='alert-wrapper'>You are registered successfully.</div>";
-             }else{
-                 die("Something went wrong");
-             }
-        }
-      }
-    }?>
       <form action="registration.php" method="post">
         <div class="inputs">
         <div class="input">
+          <?php echo $error_user_name?>
             <label for="username">Přezdívka</label>
             <div class="input-wrapper">
-                <input name="nick" type="text" placeholder="Zadejte svoji přezdívku..." />
+                <input name="user_name" type="text" placeholder="Zadejte svoji přezdívku..." />
                 <i class="fa-solid fa-user"></i>
             </div>
         </div>
@@ -98,13 +144,13 @@
             <div class="input">
                 <label for="name">Jméno</label>
                 <div class="input-wrapper">
-                    <input name="jmeno" type="text" placeholder="Zadejte jméno..." />
+                    <input name="user_firstname" type="text" placeholder="Zadejte jméno..." />
                 </div>
             </div>
             <div class="input">
                 <label for="surname">Příjmení</label>
                 <div class="input-wrapper">
-                    <input name="prijmeni" type="text" placeholder="Zadejte příjmení..." />
+                    <input name="user_lastname" type="text" placeholder="Zadejte příjmení..." />
                 </div>
             </div>
         </div>
@@ -112,16 +158,8 @@
         <div class="input">
             <label for="email">Email</label>
             <div class="input-wrapper">
-              <input name="email" type="email" placeholder="Zadejte svůj email..." />
+              <input name="user_email" type="email" placeholder="Zadejte svůj email..." />
               <i class="fa-solid fa-envelope"></i>
-            </div>
-        </div>
-        <!-- Telefon -->
-        <div class="input">
-            <label for="phone">Telefon</label>
-            <div class="input-wrapper">
-              <input name="telefon" type="tel" placeholder="Zadejte své telefoní číslo..." />
-              <i class="fa-solid fa-phone"></i>
             </div>
         </div>
         <!-- Heslo -->
@@ -134,12 +172,12 @@
             <div class="eye-icon">
               <i class="fa-solid fa-eye-slash"></i>
             </div>
-            <input name="heslo" type="password" placeholder="Zadejte heslo..."/>
+            <input name="user_password" type="password" placeholder="Zadejte heslo..."/>
           </div>
         </div>
         <div class="login-bottom">
         </div>
-          <input type="submit" class="login-btn"  value="Registrovat se" name="submit"/>
+          <input type="submit" class="login-btn"  value="Registrovat se" name="send"/>
         </form>
         <div>
           <p>Už máš účet? <a href=login.php><span class="color">Přihlaš se</span></a></p>
