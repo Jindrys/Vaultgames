@@ -19,7 +19,7 @@
         <div class="nav-top">
           <div class="nav-left">
             <i class="fa-solid fa-bars"></i>
-            <a href="index.html">
+            <a href="index.php">
               <figure class="logo">
               <img src="./images/logo.svg" alt="logo for vault games" />
             </figure>
@@ -29,7 +29,7 @@
             <i class="fa-solid fa-calendar"></i>
             <i class="fa-solid fa-heart"></i>
             <i class="fa-solid fa-cart-shopping"></i>
-            <a href="login.html">
+            <a href="login.php">
               <div class="user">J</div>
             </a>
           </div>

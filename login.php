@@ -20,7 +20,7 @@
     <section class="login">
       <div class="login-wrapper">
         <div>
-          <a href="index.html">
+          <a href="index.php">
             <figure class="login-logo">
               <img src="./images/login-logo.svg" alt="logo-voultgames">
             </figure>
@@ -54,7 +54,7 @@
           </div>
           <span class="color">Nedaří se přihlásit?</span>
         </div>
-        <a href="user.html">
+        <a href="user.php">
           <button class="login-btn">Přihlásit se</button>
         </a>
         <div>

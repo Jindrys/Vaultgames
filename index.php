@@ -93,7 +93,7 @@
 
         <?php
           include_once ("db/DBConnection.php");
-          $stmt = $conn->prepare("SELECT id_hra, nazev, cena, datum_vydani, obrazek, platforma, zanr, výrobce, informace FROM hra LIMIT 10");
+          $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `obrazek`, `platforma`, `zanr`, `výrobce`, `informace`, `obrazek_detail` FROM `hra` WHERE `datum_vydani`<CURRENT_DATE ORDER BY `hra`.`datum_vydani` DESC LIMIT 10");
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -105,7 +105,7 @@
                 echo "<div class='news-card'>
                 <a href='detail.php?hra=$gameId'>
                   <div class='news-card_img'>
-                    <img src='$imageProduct' alt='fifa 24' />
+                    <img src='$imageProduct' alt='game_image' />
                   </div>
                 </a>
               <div class='news-card_content'>
@@ -114,10 +114,7 @@
                   <div class='favorite'><i class='fa-regular fa-heart'></i></div>
                 </div>
                 <div class='news-card_bot'>
-                  <strong><span>$ $priceProduct</span></strong>
-                </div>
-                <div class='shop'>
-                  <i class='fa-solid fa-cart-shopping'></i>
+                  <strong><span>$priceProduct CZK</span></strong>
                 </div>
               </div>
             </div>";
@@ -135,79 +132,42 @@
           <span>Zobrazit vše</span>
         </header>
         <div class="news-content">
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/prince.png" alt="prince of persia" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Prince of Persia</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
+        <?php
+          include_once ("db/DBConnection.php");
+          $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `obrazek`, `platforma`, `zanr`, `výrobce`, `informace`, `obrazek_detail` FROM `hra`
+           WHERE `datum_vydani`>CURRENT_DATE ORDER BY `datum_vydani` ASC LIMIT 10;");
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach($result as $row) { 
+                $gameId = $row['id_hra'];
+                $imageProduct = $row['obrazek'];
+                $nameProduct = $row['nazev'];
+                $priceProduct = $row['cena'];
+                $datum_vydani = $row['datum_vydani'];
+                echo "<div class='news-card'>
+                <a href='detail.php?hra=$gameId'>
+                  <div class='news-card_img'>
+                    <img src='$imageProduct' alt='game_image' />
+                  </div>
+                </a>
+              <div class='news-card_content'>
+                <div class='news-card_top'>
+                  <h3>$nameProduct</h3>
+                  <div class='favorite'><i class='fa-regular fa-heart'></i></div>
+                </div>
+                <div class='news-card_bot'>
+                  <strong><span>$priceProduct CZK</span></strong>
+                </div>
+                <div class='shop'>
+                  Datum vydani <br>$datum_vydani
+                </div>
               </div>
-              <div class="news-card_bot">
-                <strong><span>$70</span></strong>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/batman.png" alt="batman arkham trilogy" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Batman Arkham Trilogy</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$45</span></strong>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img
-                src="./images/avatar.png"
-                alt="avatar frontiers of pandora"
-              />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Avatar Frontiers of Pandora</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$80</span></strong>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/tekken.png" alt="tekken 8" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Tekken 8</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$60</span></strong>
-              </div>
-            </div>
-          </div>
-          <div class="news-card">
-            <div class="news-card_img">
-              <img src="./images/city.png" alt="Cities Skylines" />
-            </div>
-            <div class="news-card_content">
-              <div class="news-card_top">
-                <h3>Cities Skylines</h3>
-                <div class="favorite"><i class="fa-regular fa-heart"></i></div>
-              </div>
-              <div class="news-card_bot">
-                <strong><span>$55</span></strong>
-              </div>
-            </div>
-          </div>
+            </div>";
+                }
+
+          ?>
+          
         </div>
       </section>
 

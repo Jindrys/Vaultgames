@@ -20,7 +20,7 @@
       <div class="nav-top">
         <div class="nav-left">
           <figure class="logo">
-            <a href="index.html">
+            <a href="index.php">
               <img src="./images/logo.svg" alt="logo for vault games" />
             </a>
           </figure>
