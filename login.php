@@ -1,3 +1,35 @@
+<?php
+    include_once("db/DBConection.php");
+
+    $user_email = "";
+    $user_password = "";
+    $error= "";
+
+    session_start();
+    session_start();
+    if(isset($_SESSION["user_id"])) {
+        header("location:user.php");
+       }
+    if (isset ($_POST["login"])) {
+      if (!empty($_POST["user_name"]) || !empty($_POST["user_password"])) {
+        $user_password = $_POST["user_password"];
+        $user_email = $_POST['user_email'];
+        $stmt = $conn->prepare("SELECT `email`,`heslo` FROM `uzivatel` WHERE email=:email AND heslo=:heslo");
+        $stmt->bindParam(":email", $user_email);
+        $stmt->bindParam(":heslo", $user_password);
+        $stmt->execute();
+
+
+
+       } else {
+         $error = '<label class="alert-wrapper">Povinná všechna pole</label>';
+       }
+    }
+
+    
+    
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,11 +58,12 @@
             </figure>
           </a>
         <h2 class="login-headline">VÍTEJ ZPÁTKY <br>GAMERE!</h2>
+      <form action="">
       <div class="inputs">
         <div class="input">
           <label for="email">Email</label>
           <div class="input-wrapper">
-            <input id="email" type="email" placeholder="Zadejte svůj email..." />
+            <input type="email" placeholder="Zadejte svůj email..." name="user_email"/>
             <i class="fa-solid fa-envelope"></i>
           </div>
         </div>
@@ -43,7 +76,7 @@
             <div class="eye-icon">
               <i class="fa-solid fa-eye-slash"></i>
             </div>
-            <input id="password" type="password" placeholder="Zadejte své heslo..."/>
+            <input type="password" placeholder="Zadejte své heslo..." name="user_password"/>
             
           </div>
         </div>
@@ -54,9 +87,8 @@
           </div>
           <span class="color">Nedaří se přihlásit?</span>
         </div>
-        <a href="user.php">
-          <button class="login-btn">Přihlásit se</button>
-        </a>
+        <input type="submit" class="login-btn"  value="Přihlásit se" name="login"/>
+      </form>  
         <div>
           <p>Nejsi zaregistrovaný? <a href="registration.php"><span class="color">Zaregistruj se</span></a></p>
         </div>

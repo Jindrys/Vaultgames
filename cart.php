@@ -28,7 +28,9 @@
           <div class="nav-right">
             <i class="fa-solid fa-calendar"></i>
             <i class="fa-solid fa-heart"></i>
-            <i class="fa-solid fa-cart-shopping"></i>
+            <a href="cart.php">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </a>
             <a href="login.php">
               <div class="user">J</div>
             </a>
@@ -48,4 +50,6 @@
           </div>
         </div>
       </nav>
+      
+      
 </body>

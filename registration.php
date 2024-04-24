@@ -1,17 +1,17 @@
 <?php
 include_once ("db/DBConnection.php");
 
-        $error_user_name = '';
+        $error_user_name = "";
   $error_user_firstname ="";
   $error_user_lastname ="";
-  $error_user_password = '';
-  $error_user_email = '';
+  $error_user_password = "";
+  $error_user_email = "";
 
-  $user_name = ''; 
+  $user_name = ""; 
   $user_firstname = "";
   $user_lastname = "";
-  $user_email = '';
-  $user_password = '';
+  $user_email = "";
+  $user_password = "";
 
   $used_email = "";
   $used_username = "";
@@ -37,10 +37,10 @@ include_once ("db/DBConnection.php");
     if (preg_match($regexp, $_POST["user_firstname"])) {
         $user_firstname = trim($_POST["user_firstname"]);
     } else {  
-      $error_user_firstname = '<label class="text-danger">Zadejte opravdové jméno</label>';
+      $error_user_firstname = '<label class="alert-wrapper">Zadejte opravdové jméno</label>';
     }
   } else {
-    $error_user_firstname = '<label class="text-danger">Povinné</label>';
+    $error_user_firstname = '<label class="alert-wrapper">Povinné</label>';
   }
 
   if (!empty($_POST["user_lastname"])) {
@@ -48,10 +48,10 @@ include_once ("db/DBConnection.php");
     if (preg_match($regexp, $_POST["user_lastname"])) {
         $user_lastname = trim($_POST["user_lastname"]);
     } else {  
-      $error_user_lastname = '<label class="text-danger">Zadejte opravdové příjmení</label>';
+      $error_user_lastname = '<label class="alert-wrapper">Zadejte opravdové příjmení</label>';
     }
   } else {
-    $error_user_lastname = '<label class="text-danger">Povinné</label>';
+    $error_user_lastname = '<label class="alert-wrapper">Povinné</label>';
   }
   
   if (!empty($_POST["user_email"])) {
@@ -64,15 +64,15 @@ include_once ("db/DBConnection.php");
         $stmt2->execute();
         $result2 = $stmt2->fetch(PDO::FETCH_ASSOC);
         if ($result2) {
-            $error_user_email = '<label class="text-danger">Tento e-mail již existuje v databázi</label>';
+            $error_user_email = '<label class="alert-wrapper">Tato emailová adresa je již použita</label>';
         } else {
           $user_email = trim($_POST["user_email"]);
         }
     } else {
-        $error_user_email = '<label class="text-danger">Neplatná e-mailová adresa</label>';
+        $error_user_email = '<label class="alert-wrapper">Neplatná e-mailová adresa</label>';
     }
 } else {
-    $error_user_email = '<label class="text-danger">E-mailová adresa je povinná</label>';
+    $error_user_email = '<label class="alert-wrapper">E-mailová adresa je povinná</label>';
 }
 
 
@@ -83,10 +83,10 @@ include_once ("db/DBConnection.php");
           $user_password = trim($_POST["user_password"]);
           $user_password = password_hash($user_password, PASSWORD_DEFAULT);
       } else {  
-        $error_user_password = '<label class="text-danger">Pouze písmena, číslice a zanky:_ . - </label>';
+        $error_user_password = '<label class="alert-wrapper">Pouze písmena, číslice a zanky:_ . - </label>';
       }
   } else {
-    $error_user_password = '<label class="text-danger">Povinné</label>';
+    $error_user_password = '<label class="alert-wrapper">Povinné</label>';
   }
 if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastname == "" && $error_user_email == "" && $error_user_password == "" ) {
   $stmt = $conn->prepare("INSERT INTO `uzivatel`(id_uzivatel, `nick`, `jmeno`, `prijmeni`, `email`, `heslo`) VALUES (NULL, :nick, :jmeno, :prijmeni, :email, :heslo)");
@@ -142,12 +142,14 @@ if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastnam
         <!-- Jmeno -->
         <div class="name-wrapper">
             <div class="input">
+            <?php echo $error_user_firstname?>
                 <label for="name">Jméno</label>
                 <div class="input-wrapper">
                     <input name="user_firstname" type="text" placeholder="Zadejte jméno..." />
                 </div>
             </div>
             <div class="input">
+            <?php echo $error_user_lastname?>
                 <label for="surname">Příjmení</label>
                 <div class="input-wrapper">
                     <input name="user_lastname" type="text" placeholder="Zadejte příjmení..." />
@@ -156,6 +158,7 @@ if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastnam
         </div>
         <!-- Email -->
         <div class="input">
+        <?php echo $error_user_email?>
             <label for="email">Email</label>
             <div class="input-wrapper">
               <input name="user_email" type="email" placeholder="Zadejte svůj email..." />
@@ -164,6 +167,7 @@ if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastnam
         </div>
         <!-- Heslo -->
         <div class="input">
+        <?php echo $error_user_password?>
           <label for="password">Heslo</label>
           <div class="input-wrapper">
             <div class="password-icon">
