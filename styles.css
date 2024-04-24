@@ -936,6 +936,12 @@ footer h3 {
     flex-direction: column;
     gap: 20px;
   }
+  .productContainer{
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 @media(max-width: 540px){
@@ -949,3 +955,203 @@ footer h3 {
 
 /* sekce cart*/
 
+.cart-wrapper{
+  display: flex;
+  flex-direction: column; 
+margin-top: 2.5rem;
+margin-bottom: 2.5rem; 
+justify-content: center; 
+}
+
+.cart{
+  flex-direction: column;
+  display: flex;
+  margin-left: 0; 
+flex-direction: column; 
+width: 100%; 
+
+padding-inline: 50px;
+}
+
+.product-container{
+  padding: 1rem; 
+  border-radius: 0.5rem; 
+  width: 100%; 
+  background-color: #ffffff; 
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
+}
+.product-text{
+  margin-bottom: 1rem; 
+font-size: 1.125rem;
+line-height: 1.75rem; 
+font-weight: 600; 
+}
+
+.products{
+  display: flex; 
+margin-top: 1rem; 
+flex-direction: column; 
+}
+
+.product{
+  display: flex; 
+padding: 1rem; 
+justify-content: space-between; 
+align-items: center; 
+border-radius: 0.5rem; 
+background-color: #F3F4F6; 
+}
+
+.something{
+  display: flex; 
+overflow: hidden; 
+position: relative; 
+flex-shrink: 0; 
+border-radius: 50%;  
+}
+
+.something2{
+  flex: 1;
+}
+.productContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f7fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+.productImage {
+  position: relative;
+  height: 80%;
+  width: auto;
+  overflow: hidden;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.productInfo {
+  margin-left: 1rem;
+  flex: 1;
+}
+.productTitle {
+  font-weight: bold;
+}
+.productAuthor {
+  font-size: 0.875rem;
+  color: #718096;
+}
+.productPriceContainer {
+  text-align: right;
+}
+.productPrice {
+  font-weight: bold;
+  margin-left: 20px;
+}
+.productIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #718096;
+}
+
+.paymentContainer {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin-top: 1.5rem;
+}
+.paymentTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.paymentOptions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.paymentButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: colors 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border: 1px solid #cbd5e0;
+  background-color: #f7fafc;
+  color: #1a202c;
+  height: 2.5rem;
+  padding: 0 1rem;
+  flex: 1;
+  cursor: pointer;
+}
+.paymentButton:hover {
+  background-color: var(--primary-color);
+  color: #f7fafc;
+}
+.paymentButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.paymentInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.paymentInput {
+  display: flex;
+  height: 2.5rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid #cbd5e0;
+  background-color: #f7fafc;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #1a202c;
+}
+.paymentInput::placeholder {
+  color: #718096;
+}
+.paymentInput:focus {
+  outline: none;
+  border: 2px solid #4a5568;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+.paymentInput:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.paymentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.paymentConfirmButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: colors 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--primary-color);
+  color: #f7fafc;
+  height: 2.5rem;
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border: none;
+}
+.paymentConfirmButton:hover {
+  background-color: var(--primary-color);
+  opacity: 0.9;
+}
+.paymentConfirmButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
