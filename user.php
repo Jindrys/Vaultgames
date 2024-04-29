@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
   </head>
   <body>
-    <nav class="navbar">
+    <nav class="navbar-detail">
       <div class="nav-top">
         <div class="nav-left">
           <figure class="logo">
@@ -28,7 +28,7 @@
         <div class="nav-right">
           <i class="fa-solid fa-calendar"></i>
           <i class="fa-solid fa-heart"></i>
-          <a href="cart.php" class="nav-icon">
+          <a href="cart.php">
             <i class="fa-solid fa-cart-shopping"></i>
           </a>
           <div class="user">J</div>

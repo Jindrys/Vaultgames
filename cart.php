@@ -56,8 +56,7 @@
         <h2 class="product-text">Košík</h2>
         <div class="products">
           <div class="product">
-            <span class="something"></span>
-            <div class="something2">
+            <div class="product-wrapper">
               <div class="productContainer">
                 <img class="productImage" src="./images/fifa.png"></img>
                 <div class="productInfo">
@@ -82,7 +81,6 @@
       <!-- Dodací adresa -->
       <div class="paymentContainer">
         <h2 class="paymentTitle">Dodací adresa</h2>
-
         <div class="paymentInputs">
           <input class="paymentInput" placeholder="Ulice a č.p." />
           <input class="paymentInput" placeholder="Město" />
@@ -90,7 +88,6 @@
             <input class="paymentInput" placeholder="Země" />
             <input class="paymentInput" placeholder="PSČ" />
           </div>
-
         </div>
       </div>
 
@@ -110,7 +107,6 @@
             <input class="paymentInput" placeholder="Expiration date" />
             <input class="paymentInput" placeholder="CVV" />
           </div>
-          
           <button class="paymentConfirmButton">Potvrdit a zaplatit</button>
         </div>
       </div>
