@@ -1,3 +1,15 @@
+<?php
+  session_start();
+  /*if (!isset($_SESSION["role"])) {
+    header('location:index.php');
+  }
+  if($_SESSION["role"] == 1) {
+    header('location:user_account.php');
+  }
+  */
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,34 +40,48 @@
       </div>
     </div>
   </nav>
+  <!-- Přidat hru --> 
   <div class="addGameContainer">
     <h2 class="addTitle">Přidat hru</h2>
     <div class="addInputs">
       <input class="addInput" placeholder="Název hry" />
       <input class="addInput" placeholder="Cena v Kč" />
-      <input class="addInput" placeholder="Datum vydání" value="2024-04-30"/>
+      <input type="date" class="addInput" placeholder="Datum vydání"/>
       <input class="addInput" placeholder="Platforma" />
-      <input class="addInput" placeholder="Žánr" />
+      <select class="addInput">
+        <option value="ps5">Playstation5</option>
+        <option value="ps4">Playstation4</option>
+        <option value="xbox">Xbox</option>
+        <option value="pc">Počítač</option>
+        <option value="switch">Nintento Switch</option>
+      </select>
       <input class="addInput" placeholder="Výrobce" />
       <input class="addInput" placeholder="Informace o hře" />
-      <input class="addInput" placeholder="Obrazek - malý" />
-      <input class="addInput" placeholder="Obrazek - velký" />
+      <input type="file" class="addInput" placeholder="Obrazek - malý" />
+      <input type="file" class="addInput" placeholder="Obrazek - velký" />
     </div>
     <button class="addConfirmButton">Uložit do databáze</button>
   </div>
+  <!-- Upravit hru -->
   <div class="addGameContainer">
     <h2 class="addTitle">Upravit hru</h2>
     <div class="addInputs">
       <input class="addInput" placeholder="Název hry" />
       <button class="findButton">Najít hru</button>
       <input class="addInput" placeholder="Cena v Kč" />
-      <input type="date" class="addInput" placeholder="Datum vydání (rrrr-mm-dd)" />
+      <input type="date" class="addInput" placeholder="Datum vydání" />
       <input class="addInput" placeholder="Platforma" />
-      <input class="addInput" placeholder="Žánr" />
+      <select class="addInput">
+        <option value="ps5">Playstation5</option>
+        <option value="ps4">Playstation4</option>
+        <option value="xbox">Xbox</option>
+        <option value="pc">Počítač</option>
+        <option value="switch">Nintento Switch</option>
+      </select>
       <input class="addInput" placeholder="Výrobce" />
       <input class="addInput" placeholder="Informace o hře" />
-      <input class="addInput" placeholder="Obrazek - malý" />
-      <input class="addInput" placeholder="Obrazek - velký" />
+      <input type="file" class="addInput" placeholder="Obrazek - malý" />
+      <input type="file" class="addInput" placeholder="Obrazek - velký" />
     </div>
     <button class="addConfirmButton">Uložit do databáze</button>
   </div>

@@ -548,7 +548,6 @@ footer h3 {
 
 .user-main {
   height: 80vh;
-  padding-top: 150px;
 }
 
 .user-wrap {
@@ -557,6 +556,30 @@ footer h3 {
   align-items: center;
   height: 100%;
   width: 100%;
+}
+
+.user-info-wrapper{
+  display: flex;
+  flex-direction: row;
+}
+
+.updateButton{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  width: 120px;
+  border-radius: 0.375rem;
+  font-family: "Space Mono", monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: colors 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--primary-color);
+  color: #f7fafc;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border: none;
+  cursor: pointer;
 }
 
 .main-left {

@@ -1,28 +1,37 @@
 <?php
-    include_once("db/DBConection.php");
+    include_once("db/DBConnection.php");
 
-    $user_email = "";
-    $user_password = "";
-    $error= "";
-
-    session_start();
     session_start();
     if(isset($_SESSION["user_id"])) {
-        header("location:user.php");
-       }
+      header("location:user.php");
+     }
     if (isset ($_POST["login"])) {
-      if (!empty($_POST["user_name"]) || !empty($_POST["user_password"])) {
-        $user_password = $_POST["user_password"];
-        $user_email = $_POST['user_email'];
-        $stmt = $conn->prepare("SELECT `email`,`heslo` FROM `uzivatel` WHERE email=:email AND heslo=:heslo");
-        $stmt->bindParam(":email", $user_email);
-        $stmt->bindParam(":heslo", $user_password);
-        $stmt->execute();
 
+      $user_email = $_POST['user_email'];
+      $user_password = $_POST['user_password'];
+      $error_email = "";
+      $error_password = "";
 
-
-       } else {
-         $error = '<label class="alert-wrapper">Povinná všechna pole</label>';
+      $stmt = $conn->prepare("SELECT * FROM `uzivatel` WHERE email=:email");
+      $stmt->bindParam(":email", $user_email);
+      $stmt->execute();
+      $result = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!$result) {
+          $error_email = '<label class="text-danger">Neplatný nebo neověřený e-mail</label>';
+      } else {
+          if (password_verify($user_password, $result['heslo']) && ($result["role"] == NULL || $result["role"] == 0)) {
+              $_SESSION['user_id'] = $result['id_uzivatel'];
+              $_SESSION['authority'] = $result['role'];
+              header('location:user.php?login=success');
+              echo "funguje to";
+          } else if(password_verify($user_password, $result['heslo']) && $result["role"] == 1) {
+              $_SESSION['user_id'] = $result['id_uzivatel'];
+              $_SESSION['authority'] = $result['role'];
+              header('location:admin.php?login=success');
+             
+          } else {
+              $error_password = '<label class="text-danger">Nesprávné heslo</label>';
+          }
        }
     }
 
@@ -58,7 +67,7 @@
             </figure>
           </a>
         <h2 class="login-headline">VÍTEJ ZPÁTKY <br>GAMERE!</h2>
-      <form action="">
+      <form method="post">
       <div class="inputs">
         <div class="input">
           <label for="email">Email</label>

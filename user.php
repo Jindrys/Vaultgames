@@ -1,3 +1,39 @@
+<?php
+include_once ("db/DBConnection.php");
+
+$idUser = $_SESSION["user_id"];
+
+session_start();
+if(isset($_SESSION["user_id"])) {
+  $idUser = $_SESSION["user_id"];
+ }
+
+if (isset($_POST["odhlasit"])) {
+    session_destroy();
+    header("location:login.php?logout=success");
+}
+
+$stmt = $conn->prepare('SELECT `id_uzivatel`, `nick`, `jmeno`, `prijmeni`, `email`, `telefon`, `ulice_cp`, `mesto`, `psc`, `zeme` FROM `uzivatel` WHERE id_uzivatel=:id_uzivatel');
+$stmt -> bindParam(":id_uzivatel", $idUser);
+$stmt ->execute();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+foreach($result as $row) { 
+  $id_uzivatele = $row['id_uzivatel'];
+  $nick = $row['nick'];
+  $jmeno = $row['jmeno'];
+  $prijmeni = $row['prijmeni'];
+  $email = $row['email'];
+  $telefon = $row['telefon'];
+  $mesto = $row['mesto'];
+  $ulice_cp = $row['ulice_cp'];
+  $psc = $row['psc'];
+  $zeme = $row['zeme'];
+}
+$zacatekNicku = substr($nick, 0, 1);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -31,7 +67,7 @@
           <a href="cart.php">
             <i class="fa-solid fa-cart-shopping"></i>
           </a>
-          <div class="user">J</div>
+          <div class="user"><?php echo $zacatekNicku;?></div>
         </div>        
     </nav>
     
@@ -39,20 +75,44 @@
       <div class="container">
         <div class="user-wrap">
           <div class="main-left">
-            <div class="avatar">J</div>
+            <div class="avatar"><?php echo $zacatekNicku;?></div>
             <div class="user-info">
               <div class="username">
                 <h3 class="subtitle">Uživatelské jméno:</h3>
-                <span>Jindrys</span>
+                <span><?php echo $nick;?></span>
               </div>
               <div class="email">
                 <h3 class="subtitle">Email:</h3>
-                <span>nolifer@seznam.cz</span>
+                <span><?php echo $email;?></span>
               </div>
               <div class="full-name">
                 <h3 class="subtitle">Celé jméno:</h3>
-                <span>Jindřich Kopejtko</span>
+                <span><?php echo $jmeno," ",$prijmeni;?></span>
               </div>
+              <div class="full-name">
+                <h3 class="subtitle">Telefon:</h3>
+                <span><?php echo $telefon;?></span>
+              </div>
+              <div class="full-name">
+                <h3 class="subtitle">Mesto:</h3>
+                <span><?php echo $mesto;?></span>
+              </div>
+              <div class="full-name">
+                <h3 class="subtitle">Ulice:</h3>
+                <span><?php echo $ulice_cp;?></span>
+              </div>
+              <div class="full-name">
+                <h3 class="subtitle">PSC:</h3>
+                <span><?php echo $psc;?></span>
+              </div>
+              <div class="full-name">
+                <h3 class="subtitle">Zeme:</h3>
+                <span><?php echo $zeme;?></span>
+              </div>
+              <button class="updateButton">Upravit</button>
+              <form method="post">
+                <input type="submit" class="updateButton" value="Odhlásit se" name="odhlasit">
+              </form> 
             </div>
           </div>
           <div class="main-right">
@@ -75,18 +135,5 @@
       </div>
     </footer>
 
-    <script>
-      const bars = document.querySelector(".nav-left i");
-      const menu = document.querySelector(".overlay");
-      const exit = document.querySelector(".close");
-
-      bars.addEventListener("click", () => {
-        menu.classList.add("active");
-      });
-
-      exit.addEventListener("click", () => {
-        menu.classList.remove("active");
-      });
-    </script>
   </body>
 </html>
