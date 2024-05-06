@@ -1,10 +1,13 @@
 <?php
   include_once ("db/DBConnection.php");
+  session_start();
+  //získaní dat o hře
   $thisGame = htmlspecialchars($_GET["hra"], ENT_QUOTES);
   $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `platforma`, `zanr`, `výrobce`, `informace`, obrazek_detail FROM `hra` WHERE id_hra =:id_hra");
   $stmt->bindParam(":id_hra", $thisGame);
   $stmt->execute();
   $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
   foreach($result as $row) { 
     $gameId = $row['id_hra'];
     $imageProduct = $row['obrazek_detail'];
@@ -15,6 +18,17 @@
     $zanr = $row['zanr'];
     $vyrobce = $row['vyrobce'];
     $info = $row['informace'];
+  }
+
+  //insert do košíku
+  if  (isset($_POST['add_cart'])) {
+    $userId = $_SESSION["user_id"];
+
+
+    $stmt2 = $conn->prepare("INSERT INTO `kosik`(`id_kosik`, `id_uzivatel`, `id_hra`) VALUES (NULL, :id_hra, :id_uzivatel)");
+    $stmt2->bindParam(":id_hra", $thisGame);
+    $stmt2->bindParam(":id_uzivatel", $userId);
+    $stmt2->execute();
   }
 ?>
 <!DOCTYPE html>
@@ -85,10 +99,29 @@
       
       <div class="price">
         <h2>CENA: <?php echo $priceProduct?> CZK</h2>
-        <div class="cart-btn">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <button>Přidat do košíku</button>
-        </div>
+        <form method="post">
+          <div class="cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <?php
+              if  ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $userId = $_SESSION["user_id"];
+            
+            
+                $stmt3 = $conn->prepare("SELECT `id_uzivatel`, `id_hra` FROM `kosik` WHERE id_uzivatel=:id_uzivatel AND id_hra=:id_hra");
+                $stmt3->bindParam(":id_hra", $thisGame);
+                $stmt3->bindParam(":id_uzivatel", $userId);
+                $stmt3->execute();
+                $result = $stmt3->fetchAll(PDO::FETCH_ASSOC);
+                if($result) {
+                  echo "<input type='submit' value='Již v košíku' name='add_cart' disabled>";
+                } else {
+                  echo "<input type='submit' value='Přidat do košíku' name='add_cart'>";
+                }
+              }
+            ?>
+            
+          </div>
+        </form>
         <div class="cart-btn_inv">
           <i class="fa-solid fa-cart-shopping"></i>
         </div>

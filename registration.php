@@ -1,7 +1,7 @@
 <?php
 include_once ("db/DBConnection.php");
 
-        $error_user_name = "";
+  $error_user_name = "";
   $error_user_firstname ="";
   $error_user_lastname ="";
   $error_user_password = "";
@@ -129,7 +129,7 @@ if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastnam
           </a>
         <h2 class="login-headline">VÍTÁME NOVÉHO <br>GAMERA!</h2>
       <!-- Nick -->
-      <form action="registration.php" method="post">
+      <form method="post">
         <div class="inputs">
         <div class="input">
           <?php echo $error_user_name?>
