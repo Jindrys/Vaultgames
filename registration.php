@@ -89,7 +89,7 @@ include_once ("db/DBConnection.php");
     $error_user_password = '<label class="alert-wrapper">Povinné</label>';
   }
 if ($error_user_name == '' && $error_user_firstname == "" && $error_user_lastname == "" && $error_user_email == "" && $error_user_password == "" ) {
-  $stmt = $conn->prepare("INSERT INTO `uzivatel`(id_uzivatel, `nick`, `jmeno`, `prijmeni`, `email`, `heslo`) VALUES (NULL, :nick, :jmeno, :prijmeni, :email, :heslo)");
+  $stmt = $conn->prepare("INSERT INTO `uzivatel`(id_uzivatel, `nick`, `jmeno`, `prijmeni`, `email`, `heslo`, `role`) VALUES (NULL, :nick, :jmeno, :prijmeni, :email, :heslo, 0)");
   $stmt->bindParam(":nick", $user_name);
   $stmt->bindParam(":jmeno", $user_firstname);
   $stmt->bindParam(":prijmeni", $user_lastname);

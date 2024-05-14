@@ -93,10 +93,7 @@ $zacatekNicku = substr($nick, 0, 1);
                 <h3 class="subtitle">Telefon:</h3>
                 <span><?php echo $telefon;?></span>
               </div>
-              <div class="full-name">
-                <h3 class="subtitle">Mesto:</h3>
-                <span><?php echo $mesto;?></span>
-              </div>
+              
               <div class="full-name">
                 <h3 class="subtitle">Ulice:</h3>
                 <span><?php echo $ulice_cp;?></span>
@@ -104,6 +101,10 @@ $zacatekNicku = substr($nick, 0, 1);
               <div class="full-name">
                 <h3 class="subtitle">PSC:</h3>
                 <span><?php echo $psc;?></span>
+              </div>
+              <div class="full-name">
+                <h3 class="subtitle">Mesto:</h3>
+                <span><?php echo $mesto;?></span>
               </div>
               <div class="full-name">
                 <h3 class="subtitle">Zeme:</h3>

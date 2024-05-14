@@ -2,8 +2,13 @@
     include_once("db/DBConnection.php");
 
     session_start();
+
     if(isset($_SESSION["user_id"])) {
       header("location:user.php");
+     }
+
+     if(isset($_GET['login']) && $_GET['login'] === 'nologin') {
+      echo '<script>alert("Musíte se přihlásit");</script>';
      }
     if (isset ($_POST["login"])) {
 

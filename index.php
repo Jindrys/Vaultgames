@@ -93,7 +93,7 @@
 
         <?php
           include_once ("db/DBConnection.php");
-          $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `obrazek`, `platforma`, `zanr`, `výrobce`, `informace`, `obrazek_detail` FROM `hra` WHERE `datum_vydani`<CURRENT_DATE ORDER BY `hra`.`datum_vydani` DESC LIMIT 10");
+          $stmt = $conn->prepare("SELECT `id_hra`, `nazev`, `cena`, `datum_vydani`, `obrazek`, `platforma`, `zanr`, `vyrobce`, `informace`, `obrazek_detail` FROM `hra` WHERE `datum_vydani`<CURRENT_DATE ORDER BY `hra`.`datum_vydani` DESC LIMIT 10");
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
