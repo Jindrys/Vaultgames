@@ -846,6 +846,23 @@ footer h3 {
   flex-direction: column;
 }
 
+.alert-success {
+  width: 100%;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
+  outline: 3px solid rgb(0, 238, 0);
+  font-family: "Space mono", monospace;
+  background-color: #fff;
+  caret-color: var(--primary-color);
+  color: rgb(0, 238, 0);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
 
 
 /* sekce detail */

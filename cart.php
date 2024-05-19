@@ -1,25 +1,42 @@
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+require "src/Exception.php";
+require "src/PHPMailer.php";
+require "src/SMTP.php";
 include_once ("db/DBConnection.php");
 session_start(); 
 
-print_r ( $_POST);
-
 $userId = $_SESSION["user_id"];
+
+$user_number_card = "";
+$user_card_holder = "";
+$user_expiration_date = "";
+$user_cvv = "";
 
 $err_phone = "";
 $err_ulice = "";
 $err_mesto = "";
 $err_zeme = "";
 $err_psc = "";
+$err_number_card = "";
+$err_card_holder = "";
+$err_expiration_date = "";
+$err_cvv = "";
+
+$celkovaCena = 0;
+
+$aktualni_datum = (new DateTime())->setTime(0, 0, 0);
+$datum_vydani = (new DateTime($datum_vydani))->setTime(0, 0, 0);
+$dateOrder = $datum_vydani->format('d.m.Y');
  
-$stmt = $conn->prepare("SELECT `jmeno`,`prijmeni`,`email`,`telefon`,`ulice_cp`,`mesto`,`psc`,`zeme` FROM `uzivatel` WHERE id_uzivatel=:id_uzivatel");
+$stmt = $conn->prepare("SELECT `nick`, `jmeno`,`prijmeni`,`email`,`telefon`,`ulice_cp`,`mesto`,`psc`,`zeme` FROM `uzivatel` WHERE id_uzivatel=:id_uzivatel");
 $stmt->bindParam(":id_uzivatel", $userId);        
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 foreach($result as $row) {
+  $nick = $row['nick'];
   $user_firstname = $row['jmeno'];
   $user_lastname = $row['prijmeni'];
   //$email = $row['jmeno']; //...testovani -> osobni email
@@ -29,45 +46,9 @@ foreach($result as $row) {
   $user_state = $row['zeme'];
   $user_psc = $row['psc'];
 }
+$zacatekNicku = substr($nick, 0, 1);
 
 $user_email = 'jindra.kopejtko@seznam.cz';
-if (isset($_POST["pay"])) {
-  require "src/Exception.php";
-  require "src/PHPMailer.php";
-  require "src/SMTP.php";
-  // vytvoreni mailu
-  $mail = new PHPMailer();
-  $mail->isSMTP();
-  $mail->Host = 'smtp.seznam.cz';
-  $mail->Port = '465';
-  $mail->SMTPAuth = true;
-  $mail->SMTPSecure = 'ssl';
-  $mail->Username = 'vaultgames@email.cz';
-  $mail->Password = 'Vaultgames123';
-  $mail->From = 'vaultgames@email.cz';
-  $mail->FromName = 'VaultGamesInfo';
-  $mail->CharSet = 'utf-8';
-  $mail->AddAddress($user_email);
-  $mail->WordWrap = 50;
-  $mail->IsHTML(true);
-  $mail->Subject = 'Objednávka';
-  $message_body = '<h2>Informace o objednávce</h2>
-                  <p>==============================================</p>
-                  <h3>Osobní údaje:</h3><br></br>
-                  <p><b>Jméno:</b> '.$user_firstname.'</p>
-                  <p><b>Příjmení:</b> '.$user_lastname.'</p>
-                  <p><b>Email:</b> '.$user_email.'</p>
-              <p><b>Adresa:</b> '.$user_street_a_number.', '.$user_city.'</p>
-              <p><b>PSČ:</b> '.$user_psc.'</p>
-              <p><b>Tel. číslo:</b> '.$user_phone.'</p>
-              <p><b>Datum:</b> '.$dateOrder.'</p><br></br>
-              <p>==============================================</p>
-              <h3>Platba:</h3><br></br>
-              <p><b>Platební metoda:</b> kartou</p>
-              <p><b>Číslo karty:</b> '.$user_number_card.'</p><br></br>';
-  $mail->Body = $message_body;
-  $mail->Send();
-}
   
 // Uložení kont. údajů
 
@@ -152,6 +133,60 @@ if (isset($_POST["ulozit_adresu"])) {
   }
 }
 
+// kontrola platebních údajů
+if(isset($_POST['pay'])) {
+  if (!empty($_POST["cislo_karty"])) {
+    $regexp = "/^[0-9]{16}$/";
+    $user_number_card = trim($_POST["cislo_karty"]);
+    if (preg_match($regexp, $user_number_card)) {
+      $user_number_card = trim($_POST["cislo_karty"]);
+    } else {  
+      $err_number_card = '<label class="alert-wrapper">Musí obsahovat 16 čísel</label>';
+    }
+  } else {
+    $err_number_card = '<label class="alert-wrapper">Povinné</label>';
+  }
+
+  if (!empty($_POST["jmeno_drzitele"])) {
+    $regexp = "/^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]*\s[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ][a-záčďéěíňóřšťúůýž]*$/";
+    $user_card_holder = trim($_POST["jmeno_drzitele"]);
+    if (preg_match($regexp, $user_card_holder)) {
+      $user_card_holder = trim($_POST["jmeno_drzitele"]);
+    } else {  
+      $err_card_holder = '<label class="alert-wrapper">Zadej te správné </label>';
+    }
+  } else {
+    $err_card_holder = '<label class="alert-wrapper">Povinné</label>';
+  }
+
+  if (!empty($_POST["datum_expirace"])) {
+    $regexp = "/^(0[1-9]|1[0-2])\/([0-9]{2})$/";
+    $user_expiration_date = trim($_POST["datum_expirace"]);
+    if (preg_match($regexp, $user_expiration_date)) {
+      $user_expiration_date = trim($_POST["datum_expirace"]);
+    } else {  
+      $err_expiration_date = '<label class="alert-wrapper">Zadej te správné datum</label>';
+    }
+  } else {
+    $err_expiration_date = '<label class="alert-wrapper">Povinné</label>';
+  }
+  if (!empty($_POST["cvv"])) {
+    $regexp = "/^[0-9]{3,4}$/";
+    $user_cvv = trim($_POST["cvv"]);
+    if (preg_match($regexp, $user_cvv)) {
+      $user_cvv = trim($_POST["cvv"]);
+    } else {  
+      $err_cvv = '<label class="alert-wrapper">Zadali jste nesprávný kód CVV</label>';
+    }
+  } else {
+    $err_cvv = '<label class="alert-wrapper">Povinné</label>';
+  }
+
+  
+
+
+}
+
 
 ?>
 
@@ -187,21 +222,8 @@ if (isset($_POST["ulozit_adresu"])) {
           <i class="fa-solid fa-cart-shopping"></i>
         </a>
         <a href="login.php">
-          <div class="user">J</div>
+          <div class="user"><?php echo $zacatekNicku;?></div>
         </a>
-      </div>
-      <div class="menu">
-        <div class="overlay">
-          <ul class="menu-list">
-            <li>PlayStation</li>
-            <li>Xbox</li>
-            <li>Nintendo</li>
-            <li>PC</li>
-            <li>Bazar</li>
-            <li>Přislušenství</li>
-          </ul>
-          <div class="close">X</div>
-        </div>
       </div>
     </div>
   </nav>
@@ -212,13 +234,15 @@ if (isset($_POST["ulozit_adresu"])) {
       <div class="product-container">
         <h2 class="product-text">Košík</h2>
         <div class="products">
-
         <?php
         $userId = $_SESSION["user_id"];
         $stmt = $conn->prepare("SELECT k.id_hra, h.nazev, h.obrazek, h.vyrobce, h.cena, k.pocet_kopii FROM kosik k JOIN hra h ON k.id_hra = h.id_hra WHERE k.id_uzivatel=:id_uzivatel");
         $stmt->bindParam(":id_uzivatel", $userId);
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($result)) {
+          echo  "<p>V košíku nic není.</p>";
+        }
         foreach($result as $row) { 
           $gameId = $row['id_hra'];
           $nazev = $row['nazev'];
@@ -229,7 +253,9 @@ if (isset($_POST["ulozit_adresu"])) {
           echo "<div class='product'>
                 <div class='product-wrapper'>
                 <div class='productContainer'>
+                <a href='detail.php?hra=$gameId'>
             <img class='productImage' src=$obrazek></img>
+            </a>
             <div class='productInfo'>
               <div class='productTitle'>$nazev</div>
               <div class='productAuthor'>$vyrobce</div>
@@ -242,22 +268,98 @@ if (isset($_POST["ulozit_adresu"])) {
             </form>
             <div class='productPriceContainer'>
               <div class='productPrice'>$cena Kč</div>
-              <svg class='productIcon' xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'
-                fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
-                <path d='M3 6h18'></path>
-                <path d='M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6'></path>
-                <path d='M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'></path>
-              </svg>
               </div>
             </div>
           </div>
         </div>";
-        } 
-        ?> 
+        $celkovaCena = $celkovaCena + $cena*$pocet_kopii;
+          if ($celkovaCena == 0) {
+            $zaplatitBtn = "<input class='paymentConfirmButton' value='Potvrdit a zaplatit' type='submit' name='pay' disabled>";
+          }else{
+            $zaplatitBtn = "<input class='paymentConfirmButton' value='Potvrdit a zaplatit' type='submit' name='pay'>";
+          }
+      }
+      if(isset($_POST['pay'])) {
+        if(empty($err_phone) && empty($err_ulice) && empty($err_mesto) && empty($err_zeme) && empty($err_psc) && empty($err_number_card) && empty($err_card_holder) && empty($err_expiration_date) && empty($err_cvv)) {
 
+          // vytvoreni mailu a poslani
+          $mail = new PHPMailer();
+          $mail->isSMTP();
+          $mail->Host = 'smtp.seznam.cz';
+          $mail->Port = '465';
+          $mail->SMTPAuth = true;
+          $mail->SMTPSecure = 'ssl';
+          $mail->Username = 'vaultgames@email.cz';
+          $mail->Password = 'Vaultgames123';
+          $mail->From = 'vaultgames@email.cz';
+          $mail->FromName = 'VaultGamesInfo';
+          $mail->CharSet = 'utf-8';
+          $mail->AddAddress($user_email);
+          $mail->WordWrap = 50;
+          $mail->IsHTML(true);
+          $mail->Subject = 'Objednávka';
+          $message_body = '<h2>Informace o objednávce</h2>
+                          <p>==============================================</p>
+                          <h3>Osobní údaje:</h3></br>
+                          <p><b>Jméno:</b> '.$user_firstname.'</p>
+                          <p><b>Příjmení:</b> '.$user_lastname.'</p>
+                          <p><b>Email:</b> '.$user_email.'</p>
+                      <p><b>Adresa:</b> '.$user_street_a_number.', '.$user_city.'</p>
+                      <p><b>PSČ:</b> '.$user_psc.'</p>
+                      <p><b>Tel. číslo:</b> '.$user_phone.'</p>
+                      <p><b>Datum:</b> '.$dateOrder.'</p></br>
+                      <p>==============================================</p>
+                      <h3>Platba:</h3></br>
+                      <p><b>Celková cena:</b> '.$celkovaCena.'  Kč</p>
+                      <p><b>Platební metoda:</b> kartou</p>
+                      <p><b>Číslo karty:</b> '.$user_number_card.'</p><br></br>';
+          $mail->Body = $message_body;
+          $mail->Send();
+      
+          $stmt7 = $conn->prepare("DELETE FROM `kosik` WHERE `id_uzivatel`=:id_uzivatel");
+          $stmt7->bindParam(":id_uzivatel", $userId);
+          $stmt7->execute();
+          header('location:'.$_SERVER['PHP_SELF']);
+          
+        }
+      }
+        
+        ?>
+        <h2> Celkem: <?php echo $celkovaCena ?> Kč</h2>
         </div>
       </div>
-
+      <?php 
+if (isset( $_POST['plus'])) {
+  $pocet_kopii++;
+  $stmt4 = $conn->prepare("UPDATE `kosik` SET `pocet_kopii`=:pocet_kopii WHERE `id_hra`=:id_hra AND `id_uzivatel`=:id_uzivatel");
+  $stmt4->bindParam(":pocet_kopii", $pocet_kopii);
+  $stmt4->bindParam(":id_hra", $_POST["id_hry"]);
+  $stmt4->bindParam(":id_uzivatel", $userId);
+  $stmt4->execute();
+  header('location:'.$_SERVER['PHP_SELF']);
+  
+}
+if (isset($_POST['minus'])) {
+  $pocet_kopii--;
+  if ($pocet_kopii <= 0) {
+    $stmt5 = $conn->prepare("DELETE FROM `kosik` WHERE `id_hra`=:id_hra AND `id_uzivatel`=:id_uzivatel");
+    $stmt5->bindParam(":id_uzivatel", $userId);
+    $stmt5->bindParam(":id_hra", $_POST["id_hry"]);
+    $stmt5->execute();
+    header('location:'.$_SERVER['PHP_SELF']);
+    
+  }else{
+    $stmt6 = $conn->prepare("UPDATE `kosik` SET `pocet_kopii`=:pocet_kopii WHERE `id_hra`=:id_hra AND `id_uzivatel`=:id_uzivatel");
+    $stmt6->bindParam(":pocet_kopii", $pocet_kopii);
+    $stmt6->bindParam(":id_uzivatel", $userId);
+    $stmt6->bindParam(":id_hra", $_POST["id_hry"]);
+    $stmt6->execute();
+    header('location:'.$_SERVER['PHP_SELF']);
+    
+  }
+  
+}
+?>
       <!-- Kontaktní údaje -->
       <div class="paymentContainer">
         <h2 class="paymentTitle">Kontaktní údaje</h2>
@@ -310,13 +412,17 @@ if (isset($_POST["ulozit_adresu"])) {
         </div>
         <div class="paymentInputs">
           <form class="paymentInputs" method="post">
-          <input class="paymentInput" name="cislo_karty" placeholder="Card number" />
-          <input class="paymentInput" name="jmeno_drzitele" placeholder="Card holder" />
+            <?php echo $err_number_card;?>
+          <input class="paymentInput" name="cislo_karty" placeholder="Číslo karty" value="<?php echo $user_number_card;?>"/>
+          <?php echo $err_card_holder;?>
+          <input class="paymentInput" name="jmeno_drzitele" placeholder="Držitel karty" value="<?php echo $user_card_holder;?>"/>
+          <?php echo $err_expiration_date;?>
+          <?php echo $err_cvv;?>
           <div class="paymentGrid">
-            <input class="paymentInput" name="datum_expirace" placeholder="Expiration date" />
-            <input class="paymentInput" name="ccv" placeholder="CVV" />
+            <input class="paymentInput" name="datum_expirace" placeholder="Datum expirace" value="<?php echo $user_expiration_date;?>"/>
+            <input class="paymentInput" name="cvv" placeholder="CVV" value="<?php echo $user_cvv;?>"/>
           </div>
-          <input class="paymentConfirmButton" value="Potvrdit a zaplatit" type="submit" name="pay">
+          <?php echo $zaplatitBtn;?>
           </form>
         </div>
       </div>

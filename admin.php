@@ -1,13 +1,13 @@
 <?php
   include_once ("db/DBConnection.php");
   session_start();
-  /*if (!isset($_SESSION["role"])) {
+  if (!isset($_SESSION["role"])) {
     header('location:index.php');
   }
-  if($_SESSION["role"] == 1) {
-    header('location:user_account.php');
+  if($_SESSION["role"] == 0) {
+    header('location:user.php');
   }
-  */
+  
 
   $nazev_hry = "";
   $cena_hry = "";
@@ -107,11 +107,109 @@
     } else {
       $err_informace = '<label class="alert-admin">Musí být vyplněno</label>';
     }
+    if ($err_nazev == "" && $err_cena == "" && $err_datum == "" && $err_zanr == "" && $err_vyrobce == "" && $err_informace == "") {
 
     // ulozeni obrazku
+    $target_dir = "images/";
+$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+$uploadOk = 1;
+$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
-    if ($err_nazev == "" && $err_cena == "" && $err_datum == "" && $err_zanr == "" && $err_vyrobce == "" && $err_informace == "") {
-      $stmt = $conn->prepare("INSERT INTO `hra`(`id_hra`, `nazev`, `cena`, `datum_vydani`, `platforma`, `zanr`, `výrobce`, `informace`, `obrazek`, `obrazek_detail`) VALUES (NULL, :nazev, :cena, :datum, :platforma, :zanr, :vyrobce, :informace, :cesta_obr_maly, :cesta_obr_velky)");
+// Check if image file is a actual image or fake image
+
+  $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+  if($check !== false) {
+    echo "File is an image - " . $check["mime"] . ".";
+    $uploadOk = 1;
+  } else {
+    echo "File is not an image.";
+    $uploadOk = 0;
+  }
+
+
+// Check if file already exists
+if (file_exists($target_file)) {
+  echo "Sorry, file already exists.";
+  $uploadOk = 0;
+}
+
+// Check file size
+if ($_FILES["fileToUpload"]["size"] > 5000000) {
+  echo "Sorry, your file is too large.";
+  $uploadOk = 0;
+}
+
+// Allow certain file formats
+if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+&& $imageFileType != "gif" ) {
+  echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+  $uploadOk = 0;
+}
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk == 0) {
+  echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+} else {
+  if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+    echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
+  } else {
+    echo "Sorry, there was an error uploading your file.";
+  }
+}
+$target_dir2 = "images_detail/";
+$target_file2 = $target_dir2 . basename($_FILES["fileToUpload2"]["name"]);
+$uploadOk2 = 1;
+$imageFileType2 = strtolower(pathinfo($target_file2,PATHINFO_EXTENSION));
+
+// Check if image file is a actual image or fake image
+
+  $check2 = getimagesize($_FILES["fileToUpload2"]["tmp_name"]);
+  if($check2 !== false) {
+    echo "File is an image - " . $check2["mime"] . ".";
+    $uploadOk2 = 1;
+  } else {
+    echo "File is not an image.";
+    $uploadOk2 = 0;
+  }
+
+
+// Check if file already exists
+if (file_exists($target_file2)) {
+  echo "Sorry, file already exists.";
+  $uploadOk2 = 0;
+}
+
+// Check file size
+if ($_FILES["fileToUpload2"]["size"] > 5000000) {
+  echo "Sorry, your file is too large.";
+  $uploadOk2 = 0;
+}
+
+// Allow certain file formats
+if($imageFileType2 != "jpg" && $imageFileType2 != "png" && $imageFileType2 != "jpeg"
+&& $imageFileType2 != "gif" ) {
+  echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+  $uploadOk2 = 0;
+}
+
+// Check if $uploadOk is set to 0 by an error
+if ($uploadOk2 == 0) {
+  echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+} else {
+  if (move_uploaded_file($_FILES["fileToUpload2"]["tmp_name"], $target_file2)) {
+    echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload2"]["name"])). " has been uploaded.";
+  } else {
+    echo "Sorry, there was an error uploading your file.";
+  }
+}
+    } else { 
+
+    }
+
+if ($err_nazev == "" && $err_cena == "" && $err_datum == "" && $err_zanr == "" && $err_vyrobce == "" && $err_informace == "") {
+  $stmt = $conn->prepare("INSERT INTO `hra`(`id_hra`, `nazev`, `cena`, `datum_vydani`, `platforma`, `zanr`, `výrobce`, `informace`, `obrazek`, `obrazek_detail`) VALUES (NULL, :nazev, :cena, :datum, :platforma, :zanr, :vyrobce, :informace, :cesta_obr_maly, :cesta_obr_velky)");
       $stmt->bindParam(":nazev", $nazev_hry);
       $stmt->bindParam(":cena", $cena_hry);
       $stmt->bindParam(":datum", $datum_vydani);
@@ -119,8 +217,8 @@
       $stmt->bindParam(":zanr", $zanr);
       $stmt->bindParam(":vyrobce", $vyrobce);
       $stmt->bindParam(":informace", $informace);
-      $stmt->bindParam(":cesta_obr_maly", $obr_maly_cesta);
-      $stmt->bindParam(":cesta_obr_velky", $obr_velky_cesta);
+      $stmt->bindParam(":cesta_obr_maly", $target_file);
+      $stmt->bindParam(":cesta_obr_velky", $target_file2);
       $stmt->execute();
 
       $vse_ok = 1;
@@ -168,7 +266,7 @@
   <!-- Přidat hru --> 
   <div class="addGameContainer">
     <h2 class="add_title">Přidat hru</h2>
-    <form method="post">
+    <form method="post" enctype='multipart/form-data'>
       <div class="addInputs">
       <?php echo $err_nazev;?>
       <input name="nazev_add" class="addInput" placeholder="Název hry" value="<?php echo htmlspecialchars($nazev_hry);?>"/>
@@ -190,36 +288,13 @@
       <?php echo $err_informace;?>
       <input name="informace_add" class="addInput" placeholder="Informace o hře" value="<?php echo htmlspecialchars($informace);?>"/>
       
-      <input name="obr_maly_add" type="file" class="addInput" placeholder="Obrazek - malý" />
+      <input name="fileToUpload" type="file" class="addInput" placeholder="Obrazek - malý" />
       
-      <input name="obr_velky_add" type="file" class="addInput" placeholder="Obrazek - velký" />
+      <input name="fileToUpload2" type="file" class="addInput" placeholder="Obrazek - velký" />
     </div>
     <input type="submit" name="add" class="addConfirmButton" value="Nahrát do databáze"/>
     </form>
     
-  </div>
-  <!-- Upravit hru -->
-  <div class="addGameContainer">
-    <h2 class="add_title">Upravit hru</h2>
-    <div class="addInputs">
-      <input class="addInput" placeholder="Název hry" />
-      <button class="findButton">Najít hru</button>
-      <input class="addInput" placeholder="Cena v Kč" />
-      <input type="date" class="addInput" placeholder="Datum vydání" />
-      <select class="addInput">
-        <option value="ps5">Playstation5</option>
-        <option value="ps4">Playstation4</option>
-        <option value="xbox">Xbox</option>
-        <option value="pc">Počítač</option>
-        <option value="switch">Nintento Switch</option>
-      </select>
-      <input class="addInput" placeholder="Žánr" />
-      <input class="addInput" placeholder="Výrobce" />
-      <input class="addInput" placeholder="Informace o hře" />
-      <input type="file" class="addInput" placeholder="Obrazek - malý" />
-      <input type="file" class="addInput" placeholder="Obrazek - velký" />
-    </div>
-    <button class="addConfirmButton">Uložit do databáze</button>
   </div>
 </body>
 </html>
