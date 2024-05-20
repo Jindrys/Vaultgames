@@ -7,6 +7,10 @@ require "src/SMTP.php";
 include_once ("db/DBConnection.php");
 session_start(); 
 
+if (!isset($_SESSION["role"])) {
+  header('location:index.php');
+}
+
 $userId = $_SESSION["user_id"];
 
 $user_number_card = "";

@@ -2,6 +2,10 @@
 include_once("db/DBConnection.php");
 session_start();
 
+if (!isset($_SESSION["role"])) {
+    header('location:index.php');
+}
+
 if (isset($_SESSION["user_id"])) {
     $idUser = $_SESSION["user_id"];
 }
