@@ -12,6 +12,10 @@ if (isset($_POST["odhlasit"])) {
     header("location:login.php?logout=success");
 }
 
+if (isset($_GET['update']) && $_GET['update'] === 'success') {
+    $update = '<label class="alert-success">Uprava profilu proběhla úspěšně</label>';
+}
+
 $stmt = $conn->prepare('SELECT `id_uzivatel`, `nick`, `jmeno`, `prijmeni`, `email`, `telefon`, `ulice_cp`, `mesto`, `psc`, `zeme` FROM `uzivatel` WHERE id_uzivatel=:id_uzivatel');
 $stmt->bindParam(":id_uzivatel", $idUser);
 $stmt->execute();
@@ -77,6 +81,7 @@ $zacatekNicku = substr($nick, 0, 1);
                 <div class="main-left">
                     <div class="avatar"><?php echo $zacatekNicku; ?></div>
                     <div class="user-info">
+                        <?php echo $update;?>
                         <div class="username">
                             <h3 class="subtitle">Uživatelské jméno:</h3>
                             <span><?php echo $nick; ?></span>
@@ -109,7 +114,9 @@ $zacatekNicku = substr($nick, 0, 1);
                             <h3 class="subtitle">Zeme:</h3>
                             <span><?php echo $zeme; ?></span>
                         </div>
-                        <button class="updateButton">Upravit</button>
+                        <a href="upravit.php">
+                          <button class="updateButton">Upravit</button>
+                        </a>
                         <form method="post">
                             <input type="submit" class="updateButton" value="Odhlásit se" name="odhlasit">
                         </form>

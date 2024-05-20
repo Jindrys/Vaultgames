@@ -137,7 +137,7 @@ if (isset($_POST["send"])) {
                 <div class="input">
                   <label for="username">Přezdívka</label>
                   <div class="input-wrapper">
-                      <input name="user_name" type="text" placeholder="Zadejte svoji přezdívku..."/>
+                      <input name="user_name" type="text" placeholder="Zadejte svoji přezdívku..." value="<?php echo htmlspecialchars($user_name);?>"/>
                       <i class="fa-solid fa-user"></i>
                   </div>
                 </div>
@@ -145,20 +145,20 @@ if (isset($_POST["send"])) {
                   <div class="input">
                     <label for="name">Jméno</label>
                     <div class="input-wrapper">
-                        <input name="user_firstname" type="text" placeholder="Zadejte jméno..."/>
+                        <input name="user_firstname" type="text" placeholder="Zadejte jméno..." value="<?php echo htmlspecialchars($user_firstname);?>"/>
                     </div>
                   </div>
                   <div class="input">
                     <label for="surname">Příjmení</label>
                     <div class="input-wrapper">
-                        <input name="user_lastname" type="text" placeholder="Zadejte příjmení..."/>
+                        <input name="user_lastname" type="text" placeholder="Zadejte příjmení..." value="<?php echo htmlspecialchars($user_lastname);?>"/>
                     </div>
                   </div>
                 </div>
                 <div class="input">
                   <label for="email">Email</label>
                   <div class="input-wrapper">
-                    <input name="user_email" type="email" placeholder="Zadejte svůj email..."/>
+                    <input name="user_email" type="email" placeholder="Zadejte svůj email..." value="<?php echo htmlspecialchars($user_email);?>"/>
                     <i class="fa-solid fa-envelope"></i>
                   </div>
                 </div>
