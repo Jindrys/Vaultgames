@@ -37,7 +37,7 @@ if (isset($_POST["add"])) {
     $vse_ok = 0;
 
     if (!empty($_POST["nazev_add"])) {
-        $regexp = "/^[A-Za-z0-9AEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+        $regexp = "/^[a-zA-Z0-9 -:]+$/";
         if (preg_match($regexp, $_POST["nazev_add"])) {
             $nazev_hry = trim($_POST["nazev_add"]);
         } else {
@@ -78,7 +78,7 @@ if (isset($_POST["add"])) {
     }
 
     if (!empty($_POST["vyrobce_add"])) {
-        $regexp = "/^[A-Za-zAEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+        $regexp = "/^[a-zA-Z0-9 .-]+$/";
         if (preg_match($regexp, $_POST["vyrobce_add"])) {
             $vyrobce = trim($_POST["vyrobce_add"]);
         } else {
@@ -89,7 +89,7 @@ if (isset($_POST["add"])) {
     }
 
     if (!empty($_POST["informace_add"])) {
-        $regexp = "/^[A-Za-z0-9AEIÝÓŮÚŽŠČŘĎŤŇáéíýóůúžščřďťň]+$/";
+        $regexp = "/^[\s\S]*$/";
         if (preg_match($regexp, $_POST["informace_add"])) {
             $informace = trim($_POST["informace_add"]);
         } else {
